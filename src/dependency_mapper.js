@@ -48,7 +48,9 @@ function set_availables(with_techtree)
     for(var counter in with_techtree)
     {
         var tech = with_techtree[counter];
-        tech.available = is_tech_available(tech);
+        var is_avail = is_tech_available(tech);
+        tech.available = is_avail;
+        tech.have = tech.have && is_avail;
     }
 }
 

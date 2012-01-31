@@ -18,9 +18,27 @@
             var have = document.createElement("input");
             have.id="tech_have_" + tech.sn;
             have.type = "checkbox";
+            have.onclick=function() { onCheckboxClick( tech ) };
             spanTag.appendChild(have);
 
             return spanTag;
+        }
+
+        function onCheckboxClick(tech) 
+        {
+            var checkBox = document.getElementById("tech_have_" + tech.sn);
+            tech.have = checkBox.checked;
+            refresh_the_world(tech.tree);
+        }
+
+        function refresh_the_world(with_tree)
+        {
+            set_availables(with_tree);
+            for( var treeiter in with_tree)
+            {
+                var tech = with_tree[treeiter];
+                set_properties(tech);
+            }
         }
 
         function set_properties(tech)
