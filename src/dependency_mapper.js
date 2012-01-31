@@ -9,6 +9,7 @@ function create_tech_tree(tech_tree_desc)
         var shortName = tech.sn;
         tech.makes_available=[]; // the set of techs that this tech helps allow
         tech.have = false;
+        tech.available = false;
         tech.tree = bigIndex;
         bigIndex[shortName]=tech;
         // done!  easy.
@@ -37,8 +38,18 @@ function create_tech_tree(tech_tree_desc)
         }
         we_depend_on.prerequisites=resolved_prereqs;
     }
+    set_availables(bigIndex);
 
     return bigIndex;
+}
+
+function set_availables(with_techtree)
+{
+    for(var counter in with_techtree)
+    {
+        var tech = with_techtree[counter];
+        tech.available = is_tech_available(tech);
+    }
 }
 
 function techs_we_have(bigIndex)
@@ -57,10 +68,10 @@ function is_tech_available(tech)
 {
     // this will tell us if a tech is available.
     var prereqs = tech.prerequisites;
-    var in_and_set = false;
+    var in_and_set = true;
     for( var anded_set_counter in prereqs)
     {
-        var or_set = prereqs[prereq_set_counter];
+        var or_set = prereqs[anded_set_counter];
         var in_or_set = false;
         for( var or_set_counter in or_set)
         {
@@ -76,5 +87,6 @@ function is_tech_available(tech)
             return false;
         }
     }
+    return in_and_set;
 }
 

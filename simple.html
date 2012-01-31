@@ -8,13 +8,30 @@
             // this will return a span element that has the settings right for a tech
             var spanTag = document.createElement("span");
             spanTag.id = "tech_" + tech.sn;
-            spanTag.className = "techSpan";
+
             var titleSpan = document.createElement("span");
             titleSpan.id="tech_title_" + tech.sn;
             titleSpan.className = "techTitle";
             titleSpan.innerHTML = tech.fn;
             spanTag.appendChild(titleSpan);
+
+            var have = document.createElement("input");
+            have.id="tech_have_" + tech.sn;
+            have.type = "checkbox";
+            spanTag.appendChild(have);
+
             return spanTag;
+        }
+
+        function set_properties(tech)
+        {
+            var shortName = tech.sn;
+            var spanClass = "techSpan " + (tech.have ? " have" : tech.available?" available":" notAvailable");
+            var span = document.getElementById("tech_" + shortName);
+            span.className = spanClass;
+            var have = document.getElementById("tech_have_" + shortName);
+            have.checked = tech.have;
+            have.disabled = !tech.available;
         }
 
         function initial_population(with_techtree, div_to_add_to)
@@ -26,10 +43,17 @@
             {
                 var newSpan = return_span(with_techtree[tech]);
                 div_to_add_to.appendChild(newSpan);
+                set_properties(with_techtree[tech])
             }
         }
     </SCRIPT>
     <TITLE>This is a test</TITLE>
+    <style type="text/css" >
+        *.have { color: green }
+        *.available { color: blue  }
+        *.notAvailable {color: red }
+        *.techSpan {display:block }
+    </style>
 </HEAD>
 <BODY>
     Frob o la
