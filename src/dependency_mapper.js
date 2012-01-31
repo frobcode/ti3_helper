@@ -1,7 +1,7 @@
 
 function create_tech_tree(tech_tree_desc)
 {
-    var bigIndex;
+    var bigIndex = Object();
     for(var counter in tech_tree_desc)
     {
         // first, let's build the big list
@@ -10,7 +10,7 @@ function create_tech_tree(tech_tree_desc)
         tech.makes_available=[]; // the set of techs that this tech helps allow
         tech.have = false;
         tech.tree = bigIndex;
-        bigIndex[sn]=tech;
+        bigIndex[shortName]=tech;
         // done!  easy.
     }
     // now build the set of techs made available by any particular tech
@@ -35,7 +35,7 @@ function create_tech_tree(tech_tree_desc)
             }
             resolved_prereqs.push(resolved_ord_set);
         }
-        we_depend_on.prerequisites=resolve_prereqs;
+        we_depend_on.prerequisites=resolved_prereqs;
     }
 
     return bigIndex;

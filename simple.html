@@ -2,17 +2,45 @@
 <HEAD>
     <SCRIPT language="javascript" src="data/techtree.js" ></SCRIPT>
     <SCRIPT language="javascript" src="src/dependency_mapper.js" ></SCRIPT>
+    <SCRIPT language="javascript">
+        function return_span(tech)
+        {
+            // this will return a span element that has the settings right for a tech
+            var spanTag = document.createElement("span");
+            spanTag.id = "tech_" + tech.sn;
+            spanTag.className = "techSpan";
+            var titleSpan = document.createElement("span");
+            titleSpan.id="tech_title_" + tech.sn;
+            titleSpan.className = "techTitle";
+            titleSpan.innerHTML = tech.fn;
+            spanTag.appendChild(titleSpan);
+            return spanTag;
+        }
+
+        function initial_population(with_techtree, div_to_add_to)
+        {
+            // find the 'techs' identifier
+            // and then make an element per tech
+            // with indication if it is enabled and available
+            for( var tech in with_techtree )
+            {
+                var newSpan = return_span(with_techtree[tech]);
+                div_to_add_to.appendChild(newSpan);
+            }
+        }
+    </SCRIPT>
     <TITLE>This is a test</TITLE>
 </HEAD>
 <BODY>
     Frob o la
+    <div id="techs">
+
+    </div>
     <SCRIPT language="javascript" >
-    var thecomma = "";
-    for(var rw in techtree)
-    {
-        document.write( thecomma + techtree[rw]['d'] );
-        thecomma=", ";
-    }
+    
+        var tech_tree = create_tech_tree(techtree);
+        var techs_div = document.getElementById("techs");
+        initial_population( tech_tree, techs_div);
 </SCRIPT>
 </BODY>
 </HTML>
