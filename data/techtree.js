@@ -1,0 +1,28 @@
+
+var techtree = [
+{"sn":"dsc", "fn":"Deep Space Cannon", "pr":[["hv"]], "c":"r", "d":"Enemy fleets in adjacent systems are now in range of your PDS units."},
+{"sn":"st", "fn":"Sarween Tools", "pr":[["ec"]],"c":"y", "d":"Whenever you produce units at any Space Dock, you now receive one additional resource with which to build units." },
+{"sn":"td", "fn":"Transit Diodes", "pr":[["lwd","da"]], "c":"y","d":"As an action, you may spend one Command Counter from your Strategic Allocation to immediately move up to four of your Ground Forces from any one of your planets to any other planet you control." },
+{"sn":"mt", "fn":"Micro Technology", "pr":[["sc","st"]], "c":"y","d":"When you execute the secondary ability of the Trade Strategy, you now receive one additional Trade Good for each of your active trade agreements."},
+{"sn":"gl", "fn":"Graviton Laser System", "pr":[["dsc"]], "c":"y", "d":"When you make a combat roll with a PDS unit and miss, you may now make a single re-roll for each roll that missed."},
+{"sn":"ie", "fn":"Integrated Economy", "pr":[["mt"],["cy"]], "c":"y", "d":"When producing units at your Space Docks, you may now place the new units in any activated, adjacent system that is empty or friendly.  you may place PDS and Ground Force units on any friendly planet within this range." },
+{"sn":"ac", "fn":"Assault Cannon", "pr":[["dsc"],["cy"]], "c":"r", "d":"Before any Space Battle begins, your participating Dreadnoughts may each fire one shot.  Any hits are applied immediately, and casualties do not receive return fire."},
+{"sn":"gn", "fn":"Graviton Negator", "pr":[["ac","da"]], "c":"r", "d":"Your Dreadnoughts may now bombard planets that contain PDS units.  Your fighters may participate in Invasion Combat.  Surviving Fighters are returned to space after the combat and can never establish control of a planet." },
+{"sn":"ws", "fn":"War Sun", "pr":[["dsc"],["st"]], "c":"r", "d":"You are now allowed to produce War Sun units."},
+{"sn":"mdg","fn":"Magen Defense Grid","pr":[["dsc"]], "c":"r", "d":"All of your PDS units now receive +1 on all combat rolls.  In addition, all of your defending Ground Forces on a planet with a PDS receive +1 on all combat rolls during Invasion Combat."},
+{"sn":"fl","fn":"Fleet Logistics","pr":[["gn"]], "c":"b","d":"When taking a Tactical Action, you may now take two Tactical Actions, one after the other, before your turn ends."},
+{"sn":"av","fn":"Advanced fighters","pr":[["tivd"]],"c":"b","d":"Your fighters may now move indepedently with a movement rate of 2 and receive +1 on all combat rolls.  Your Fighters do not require the support of Carriers or Space Docks, and enemy ships may not move through a system your Fighters occupy." },
+{"sn":"tivd","fn":"Type IV Drive","pr":[["xrd"],["nm"]], "c":"b","d":"All of your Cruisers and Dreadnoughts now receive +1 movement."},
+{"sn":"lwd","fn":"Light/Wave Deflector","pr":[["xrd"],["mdg"]],"c":"b","d":"Your ships may now move through systems containing enemy ships and continue their movement to the activated system."},
+{"sn":"xrd","fn":"XRD Transporters","pr":[["ad"]],"c":"b","d":"All of your Carriers now receive +1 movement."},
+{"sn":"ad","fn":"Antimass Deflectors","pr":[],"c":"b","d":"All of your ships may now move through Asteroid Fields but may never end their movement in an Asteroid Field."},
+{"sn":"da","fn":"Dacxive Animators","pr":[["nm"]],"c":"g","d":"If you win an Invasion Combat, roll once for every Ground Force unit killed (your and your opponent's).  for ever roll of 6+, place one Ground Force unit on the planet from your reinforcements."},
+{"sn":"x89","fn":"X-89 Bacterial Weapon","pr":[["td","ac"]],"c":"g","d":"Your Dreagnought or War Sun units may now use this option before bombarding.  Immediately destroy all enemy Ground Forces on the planet.  Then discard all of your Action Cards."},
+{"sn":"nm","fn":"Neural Motivator","pr":[["sc","mt"]],"c":"g","d":"You now draw one extra Action Card during each Status Phase."},
+{"sn":"gs","fn":"Gen Synthesis","pr":[["cy"]],"c":"g","d":"All of your Ground Forces now receive +1 on all combat rolls during Invasion Combat.  When one of your Ground Froce units is destroyed, roll a die:  On a result of 5+, the unit is instead returned to a planet in your Home System."},
+{"sn":"cy","fn":"Cybernetics","pr":[["sc","ad"]],"c":"g","d":"All of your Fighters now receive +1 on all combat rolls."},
+{"sn":"ec","fn":"Enviro Compensator","pr":[],"c":"y","d":"The production capacity of your space Docks is now increased by 1."},
+{"sn":"hv","fn":"Hylar V Assault Laser","pr":[],"c":"r","d":"All of your Cruisers and Destroyers now receive +1 on all combat rolls."},
+{"sn":"sc","fn":"Stasis Capsules","pr":[["ec"]],"c":"g","d":"Your Cruisers and Dreadnoughts may now carry one Ground Force unit."},
+];
+

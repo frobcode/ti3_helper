@@ -1,0 +1,2 @@
+This is a project to make a helper for TI3.  My general idea right now is that all the info is stored in your browser, and just the data files are located on the server (ie the app is actually in javascript).
+
