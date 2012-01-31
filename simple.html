@@ -1,14 +1,14 @@
 <HTML>
 <HEAD>
-<SCRIPT language="javascript" src="data/techtree.js" />
-<SCRIPT language="javascript" src="src/dependency_mapper.js" />
+    <SCRIPT language="javascript" src="data/techtree.js" ></SCRIPT>
+    <SCRIPT language="javascript" src="src/dependency_mapper.js" ></SCRIPT>
     <TITLE>This is a test</TITLE>
 </HEAD>
 <BODY>
     Frob o la
     <SCRIPT language="javascript" >
     var thecomma = "";
-    for rw in techtree
+    for(var rw in techtree)
     {
         document.write( thecomma + techtree[rw]['d'] );
         thecomma=", ";
