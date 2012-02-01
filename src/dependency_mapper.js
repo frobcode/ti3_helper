@@ -297,3 +297,25 @@ function is_tech_available(tech)
     return in_and_set;
 }
 
+function prereqs_as_string(tech)
+{
+    // return a string with the prerequisites.
+    var toReturn = "";
+    var and_sep = "";
+    for( anded_set_counter in tech.prerequisites)
+    {
+        toReturn = toReturn + and_sep;
+        var or_set = tech.prerequisites[anded_set_counter];
+        var or_sep = "";
+        for( var or_set_iter in or_set)
+        {
+            var prereq = or_set[or_set_iter];
+            toReturn = toReturn + or_sep + prereq.fn;
+            or_sep=" or ";
+        }
+        and_sep = ", ";
+    }
+    return toReturn;
+}
+
+

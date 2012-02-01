@@ -13,6 +13,7 @@
             titleSpan.id="tech_title_" + tech.sn;
             titleSpan.className = "techTitle";
             titleSpan.innerHTML = tech.fn;
+            titleSpan.title = prereqs_as_string(tech);
             spanTag.appendChild(titleSpan);
 
             var have = document.createElement("input");
@@ -27,6 +28,41 @@
             spanTag.appendChild(dist);
 
             return spanTag;
+        }
+
+        function sorted_techlist(with_techtree)
+        {
+            var seen = Object();
+            var results = [];
+            var minimum;
+            var maximum = "";
+            // selection sort YAYYY
+            for(var ttiter in with_techtree) {
+                if( with_techtree[ttiter].fn > maximum )
+                {
+                    maximum = with_techtree[ttiter].fn;
+                }
+            }
+            for(var ttiter in with_techtree)
+            {
+                // find the minimum
+                var to_push;
+                minimum = maximum;
+                for(var ttiter2 in with_techtree)
+                {
+                    var to_look_at = with_techtree[ttiter2];
+                    if( seen[to_look_at.sn] ) {
+                        continue;
+                    }
+                    if( minimum >= to_look_at.fn ) {
+                        minimum = to_look_at.fn;
+                        to_push = to_look_at;
+                    }
+                }
+                results.push(to_push);
+                seen[to_push.sn] = to_push;
+            }
+            return results;
         }
 
         function onCheckboxClick(tech) 
@@ -65,11 +101,12 @@
             // find the 'techs' identifier
             // and then make an element per tech
             // with indication if it is enabled and available
-            for( var tech in with_techtree )
+            var to_iter = sorted_techlist(with_techtree);
+            for( var tech in to_iter )
             {
-                var newSpan = return_span(with_techtree[tech]);
+                var newSpan = return_span(to_iter[tech]);
                 div_to_add_to.appendChild(newSpan);
-                set_properties(with_techtree[tech])
+                set_properties(to_iter[tech])
             }
         }
     </SCRIPT>
