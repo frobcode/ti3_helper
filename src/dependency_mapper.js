@@ -1,4 +1,6 @@
 
+// this is a big ole directed graph.  So things like 'how do I get to X' should be a simple matter of 
+// graph traversal
 function create_tech_tree(tech_tree_desc)
 {
     var bigIndex = Object();
@@ -65,6 +67,162 @@ function techs_we_have(bigIndex)
     }
     return techs;
 }
+
+// this function will call the callback for the tech itself, and each of its prereqs
+function traverse_prerequisites(starting_tech, callback_per_tech)
+{
+    var result;
+}
+
+// Find the techs that we require in order to get the named tech.  'or' techs for
+// which you do not have any of the prereqs are given in an array as well
+// return an array of prerequisites, with 'or' being put in a group
+function find_outstanding_requirements(tech)
+{
+    var required = [];
+    var prereqs = tech.prereqs;
+    for(var and_list_counter in prereqs)
+    {
+    }
+}
+        
+// this will tell you how to get to tech X, from where you are.
+// Due to 'or', there may be multiple paths.  So this calls a callback
+// each time it finds a path, starting from the tech you want, and ending just before the tech you have.
+// The path is provided in the form of an array of techs.
+// Calling this on a tech you have returns you an empty array.
+function want_tech(tech, on_completed_path)
+{
+    var current_path = [];
+    var finder_context = create_finder_context([], [tech], Object());
+    return _tech_path(finder_context, on_completed_path);
+}
+
+function create_finder_context(current_path, remaining_to_visit, visited)
+{
+    var ctx = Object();
+    ctx.path = cloneObj(current_path);
+    ctx.to_visit = cloneObj(remaining_to_visit);
+    ctx.visited = cloneobj(visited);
+    ctx.clone = function() {
+        return create_finder_context(this.path, this.to_visit, this.visited);
+    }
+    return finder;
+}
+
+function cloneObj(o)
+{
+    var theClone = Object();
+    for(prop in o)
+    {
+        theClone.prop = o.prop;
+    }
+}
+
+function _tech_path(ctx,  on_completed_path)
+{
+    if(ctx.to_visit.length == 0 )
+    {
+        return on_completed_path(ctx.path);
+    }
+
+    var visiting_now = ctx.to_visit.pop(); 
+    // it is possible to queue up a bunch of nodes that will have been visited, but weren't
+    // when they were queued.  Grrr argh.
+    while(ctx.to_visit.length > 0 && ctx.visited[visiting_now.sn] )
+    {
+        visiting_now = ctx.to_visit.pop();
+    }
+
+    if( ctx.visited[visiting_now.sn] ){
+        return on_completed_path(ctx.path);
+    }
+
+    ctx.path.push(visiting_now);
+    // we have visited this, in this context...
+    ctx.visited[visiting_now.sn] = visiting_now;
+
+    // deadly loop check...
+    if(current_path.length > 500 )
+    {
+        on_completed_path([]);
+    }
+
+    // now generate all the various paths we can go, and do them as separate contexts
+
+    var path_counters = [];
+    var path_maxes =[];
+    // in the case of 'and', two things need to be added to the list, plus the
+    // prereqs of those things.
+    // In the case of 'or', you need to add ONE, and then do that one, then the OTHER, and do that.
+    // in fact, if you have sets 1,2,3 of size s1 s2 and s3, you have s1*s2*s3 different paths.
+    for(var anded_set_counter in current_tech.prereqs)
+    {
+        path_counters.push(0);
+        ord_set_max = current_tech.prereqs[anded_set_counter].length;
+        path_maxes.push(ord_set_max);
+    }
+    // we will quit when we try to roll over the last one.
+    
+    // so first, we always want to call with our reduced context... it may finish us out, if 
+    // we just did that last visit
+    _tech_path(ctx, on_completed_path);
+    while(path_counters[path_counters.length-1] < path_maxes[path_counters.length-1])
+    {
+        var new_ctx = ctx.clone();
+        for(var index in current_tech.prereqs)
+        {
+            var to_push = current_tech.prereqs[index][path_counter[index]];
+            if( !ctx.visited[to_push])
+            {
+                new_ctx.to_visit.push(to_push);
+            }
+        }
+        _tech_path(new_ctx, on_completed_path);
+        for(var index in path_counters)
+        {
+            // increment the counters, leftmost first
+            path_counter[index] += 1;
+            if( path_counter[index] < path_maxes[index] )
+                break;
+        }
+    }
+}
+
+
+
+
+function tech_prereq_audit(tech, broken_prereqs_callback)
+{
+    // traverse the prerequisite graph, checking to see if we have the 
+    // requisite techs!
+    for( var anded_set_counter in prereqs)
+    {
+        or_set = prereqs[anded_set_counter];
+        or_flag = false;
+        for(var or_set_counter in or_set) {
+            var tech = or_set[or_set_counter];
+            if( tech.have ) {
+                var really = tech_prereq_audit(tech, broken_prereqs_callback);
+                if(really) {
+                    or_flag = true;
+                    break;
+                }
+            }
+        }
+        if( ! or_flag )
+        {
+            // somehow we have broken the prereqs, 
+            // set the 'have' to the result of the callback
+            tech.have = broken_prereqs_callback(tech);
+        }
+    }
+}
+
+function tech_dependents_audit(tech, brokend_dependents_callback)
+{
+    // traverse the dependents graph, checking to see if they have their requisite techs
+    //
 
 function is_tech_available(tech)
 {
