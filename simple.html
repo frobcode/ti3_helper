@@ -21,6 +21,11 @@
             have.onclick=function() { onCheckboxClick( tech ) };
             spanTag.appendChild(have);
 
+            var dist = document.createElement("span");
+            dist.id="tech_distance_"+tech.sn;
+            dist.innerHTML="";
+            spanTag.appendChild(dist);
+
             return spanTag;
         }
 
@@ -50,6 +55,9 @@
             var have = document.getElementById("tech_have_" + shortName);
             have.checked = tech.have;
             have.disabled = !tech.available;
+            var distance = get_tech_distance(tech);
+            var dist = document.getElementById("tech_distance_" + shortName);
+            dist.innerHTML="" + distance;
         }
 
         function initial_population(with_techtree, div_to_add_to)
