@@ -13,7 +13,7 @@
             titleSpan.id="tech_title_" + tech.sn;
             titleSpan.className = "techTitle";
             titleSpan.innerHTML = tech.fn;
-            titleSpan.title = prereqs_as_string(tech);
+            titleSpan.title = tech.d;
             spanTag.appendChild(titleSpan);
 
             var have = document.createElement("input");
@@ -25,6 +25,7 @@
             var dist = document.createElement("span");
             dist.id="tech_distance_"+tech.sn;
             dist.innerHTML="";
+            dist.title = prereqs_as_string(tech);
             spanTag.appendChild(dist);
 
             return spanTag;
@@ -32,44 +33,28 @@
 
         function sorted_techlist(with_techtree)
         {
-            var seen = Object();
-            var results = [];
-            var minimum;
-            var maximum = "";
-            // selection sort YAYYY
-            for(var ttiter in with_techtree) {
-                if( with_techtree[ttiter].fn > maximum )
-                {
-                    maximum = with_techtree[ttiter].fn;
-                }
-            }
+            var toReturn = [];
             for(var ttiter in with_techtree)
             {
-                // find the minimum
-                var to_push;
-                minimum = maximum;
-                for(var ttiter2 in with_techtree)
-                {
-                    var to_look_at = with_techtree[ttiter2];
-                    if( seen[to_look_at.sn] ) {
-                        continue;
-                    }
-                    if( minimum >= to_look_at.fn ) {
-                        minimum = to_look_at.fn;
-                        to_push = to_look_at;
-                    }
-                }
-                results.push(to_push);
-                seen[to_push.sn] = to_push;
+                toReturn.push(with_techtree[ttiter]);
             }
-            return results;
+
+            toReturn.sort(function( a, b) { return (a.fn<b.fn)? -1:1});
+               
+            return toReturn;
         }
 
         function onCheckboxClick(tech) 
         {
             var checkBox = document.getElementById("tech_have_" + tech.sn);
             tech.have = checkBox.checked;
-            refresh_the_world(tech.tree);
+            update_availability(tech, tech_updated);
+        }
+
+        // this is called back from update_availability, as things get touched
+        function tech_updated(tech)
+        {
+            set_properties(tech);
         }
 
         function refresh_the_world(with_tree)
@@ -85,12 +70,12 @@
         function set_properties(tech)
         {
             var shortName = tech.sn;
-            var spanClass = "techSpan " + (tech.have ? " have" : tech.available?" available":" notAvailable");
+            var spanClass = "techSpan " + (tech.have ? " have" : (tech.distance < 2)?" available":" notAvailable");
             var span = document.getElementById("tech_" + shortName);
             span.className = spanClass;
             var have = document.getElementById("tech_have_" + shortName);
             have.checked = tech.have;
-            have.disabled = !tech.available;
+            have.disabled = (tech.distance > 1);
             var distance = get_tech_distance(tech);
             var dist = document.getElementById("tech_distance_" + shortName);
             dist.innerHTML="" + distance;

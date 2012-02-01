@@ -4,6 +4,64 @@ function _do_nothing(tech, distance)
     return distance;
 }
 
+function update_availability(tech, callback_on_affected)
+{
+    if( ! callback_on_affected ) {
+        callback_on_affected = function() { return; };
+    }
+    var state = Object();
+    state.visited = Object();
+    state.callback_on_tech = callback_on_affected;
+
+    visit_graph(tech, update_available_visitor, state);
+    // just update the client when everything is settled...
+    for(var all_visited in state.visited)
+    {
+        var updated_tech = state.visited[all_visited];
+        callback_on_affected(updated_tech);
+    }
+}
+
+function update_available_visitor(tech, state)
+{
+    var visited = state.visited[tech.sn];
+    if( visited)
+    {
+        return [];
+    }
+    var old_dist = tech.distance;
+    var new_dist = get_tech_distance(tech);
+    var needed_update = false;
+    if( new_dist != old_dist )
+    {
+        needed_update = true;
+    }
+    tech.distance = new_dist;
+    var old_have = tech.have;
+    tech.have = tech.have && (tech.distance < 2);
+    if( old_have != tech.have )
+    {
+        needed_update = true;
+    }
+    if(needed_update)
+        alert("Tech " + tech.fn + " needed update!");
+    state.visited[tech.sn] = tech;
+    return tech.makes_available;
+}
+
+function visit_graph(node, callback_on_node, state)
+{
+    // visit a node, by calling a callback with that node, 
+    // plus opaque state, which can return a list of nodes which will be
+    // then recursively visited.
+    var returned_set = callback_on_node(node, state);
+    for(var set_iter in returned_set)
+    {
+        var new_node = returned_set[set_iter];
+        visit_graph(new_node, callback_on_node, state);
+    }
+}
+
 function get_tech_distance(current_tech, per_node_visit_function )
 {
     if( ! per_node_visit_function )
@@ -63,7 +121,7 @@ function create_tech_tree(tech_tree_desc)
         var shortName = tech.sn;
         tech.makes_available=[]; // the set of techs that this tech helps allow
         tech.have = false;
-        tech.available = false;
+        tech.distance = 99;
         tech.tree = bigIndex;
         bigIndex[shortName]=tech;
         // done!  easy.
@@ -85,7 +143,7 @@ function create_tech_tree(tech_tree_desc)
             {
                 target_techname = ord_condition_set[ord_condition_counter];
                 target_tech = bigIndex[target_techname];
-                target_tech.makes_available.push(techname);
+                target_tech.makes_available.push(we_depend_on);
                 resolved_ord_set.push( target_tech );
             }
             resolved_prereqs.push(resolved_ord_set);
@@ -102,9 +160,9 @@ function set_availables(with_techtree)
     for(var counter in with_techtree)
     {
         var tech = with_techtree[counter];
-        var is_avail = is_tech_available(tech);
-        tech.available = is_avail;
-        tech.have = tech.have && is_avail;
+        var distance = get_tech_distance(tech);
+        tech.distance = distance;
+        tech.have = tech.have && (distance < 2);
     }
 }
 
