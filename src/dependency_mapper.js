@@ -11,6 +11,7 @@ function update_availability(tech, callback_on_affected)
     }
     var state = Object();
     state.visited = Object();
+    state.visitcount = 0;
     state.callback_on_tech = callback_on_affected;
 
     visit_graph(tech, update_available_visitor, state);
@@ -24,11 +25,20 @@ function update_availability(tech, callback_on_affected)
 
 function update_available_visitor(tech, state)
 {
-    var visited = state.visited[tech.sn];
-    if( visited)
+    // this should only be called UPWARD, but we can have situation that
+    // C relies on A OR B and B relies on A so we need to check C from A,
+    // and ALSO C from B, so this means C gets multiple visits.  Kinda gross
+    // but that's what you get with multipath.
+    if( state.visitcount > 1000 )
     {
+        // anti-loop check; hope 1000 is enough
+        alert("Hit loop check; further operations precluded")
         return [];
     }
+
+    var available = is_tech_available(tech); // cheaper than distance!
+    var old_have = tech.have;
+    tech.have = tech.have && available; // if our prereqs have been fribbled, we should change too.
     var old_dist = tech.distance;
     var new_dist = get_tech_distance(tech);
     var needed_update = false;
@@ -37,15 +47,12 @@ function update_available_visitor(tech, state)
         needed_update = true;
     }
     tech.distance = new_dist;
-    var old_have = tech.have;
-    tech.have = tech.have && (tech.distance < 2);
     if( old_have != tech.have )
     {
         needed_update = true;
     }
-    if(needed_update)
-        alert("Tech " + tech.fn + " needed update!");
     state.visited[tech.sn] = tech;
+    state.visitcount++;
     return tech.makes_available;
 }
 
@@ -160,9 +167,11 @@ function set_availables(with_techtree)
     for(var counter in with_techtree)
     {
         var tech = with_techtree[counter];
+        var currentlyhave = tech.have;
+        tech.have = false;
         var distance = get_tech_distance(tech);
         tech.distance = distance;
-        tech.have = tech.have && (distance < 2);
+        tech.have = currentlyhave && (distance < 2);
     }
 }
 
