@@ -91,25 +91,25 @@ function get_tech_distance(current_tech, per_node_visit_function )
     }
 
     // otherwise, we need to run through!
-    var current_distance = 0; // something small, as && is max
+    var current_distance = 0; // && means ADD DISTANCES
     for(var anded_sets_iter in current_tech.prerequisites)
     {
         // the strategy here is, for each set of values anded
-        // together, our distance is 1 + the MAX.
+        // together, our distance is SUM.
         // but when values are OR'D together, the distance is the MIN
         var current_ord_set = current_tech.prerequisites[anded_sets_iter];
         var ord_set_distance = 1000000; // big, || is min
         for(var ord_sets_iter in current_ord_set)
         {
             var tech = current_ord_set[ord_sets_iter];
-            var try_distance = 1 + get_tech_distance(tech, per_node_visit_function);
+            var try_distance = get_tech_distance(tech, per_node_visit_function);
             if( try_distance < ord_set_distance )
                 ord_set_distance = try_distance;
         }
         if( ord_set_distance > current_distance )
-            current_distance = ord_set_distance;
+            current_distance += ord_set_distance;
     }
-
+    current_distance +=1; // plus one to get ourselves.
     per_node_visit_function(current_tech, current_distance);
     return current_distance;
 }
