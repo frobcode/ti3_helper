@@ -56,6 +56,94 @@ function update_available_visitor(tech, state)
     return tech.makes_available;
 }
 
+function get_path_to(tech, on_each_path )
+{
+    // find the path to a given tech, given the current state of the tree
+    var state = Object();
+    state.callback=function(somestate) { on_each_path(somestate.path) };
+    state.path=[];
+    state.old_path = [];
+    get_pathing_visitor(tech, state);
+}
+
+function concat_arrays(obj1, obj2)
+{
+    resultobj = [];
+    for(var iter1 in obj1)
+    {
+        resultobj.push(obj1[iter1]);
+    }
+    for(var iter2 in obj2)
+    {
+        resultobj.push(obj2[iter2]);
+    }
+    return resultobj;
+}
+
+function get_pathing_visitor( visiting_tech, state)
+{
+    // this should return a list of prerequisites to visit.
+    // if we HAVE this, we return []
+    if( visiting_tech.have )
+    {
+        return [];
+    }
+    if(is_tech_available(visiting_tech) )
+    {
+        // also, don't need to visit anything, but we add ourselves to the path...
+        state.path.push(visiting_tech);
+        state.callback(state);
+        return [];
+    }
+    // otherwise, for each 'or' we need to bifurcate the path, and call visit_graph for that  
+    // This requires iterating through all the combinations of 'ors'.  In our case, it's always
+    // at most 2 I think, but hey; why be constrained?
+    var continuing_states = [];
+    // let's build some motherfucking combos.
+    var counter_array = [];
+    var counter_rollover_values = [];
+    for(var prereq_counter in visiting_tech.prerequisites)
+    {
+        counter_array.push(0); // we start at 0
+        var ord_set_size = visiting_tech.prerequisites[prereq_counter].length
+        counter_rollover_values.push(ord_set_size);
+    }
+    var carry = 0;
+    while(carry == 0)
+    {
+        var new_state = Object();
+        new_state.path = [];
+        new_state.callback = function(newstate) { 
+            newstate.path = concat_arrays(newstate.path, state.path);
+            newstate.path.push( visiting_tech );
+            // close over the existing state, to capture the callback
+            alert("Calling back from " + visiting_tech.fn);
+            state.callback( newstate);
+        }
+        for(var counter_iter in counter_array)
+        {
+            var tech_to_visit = visiting_tech.prerequisites[counter_iter][counter_array[counter_iter]];
+            alert("About to visit " + tech_to_visit.fn);
+            visit_graph(tech_to_visit, get_pathing_visitor, new_state);
+        }
+        // now increment the counters, left-to-right
+        carry = 1;
+        for(var counter_iter in counter_array)
+        {
+            counter_array[counter_iter] += carry;
+            carry = 0;
+            if( counter_array[counter_iter] >= counter_rollover_values[counter_iter])
+            {
+                counter_array[counter_iter] = 0;
+                carry = 1;
+            }
+        }
+        // if the carry remained one, that means everything rolled over, so we should be done
+    }
+
+    return []; // we never want visit_graph to do its own thing
+}
+
 function visit_graph(node, callback_on_node, state)
 {
     // visit a node, by calling a callback with that node, 

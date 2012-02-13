@@ -28,8 +28,33 @@
             dist.title = prereqs_as_string(tech);
             spanTag.appendChild(dist);
 
+            var pather = document.createElement("input");
+            pather.id="tech_path_" + tech.sn;
+            pather.type="button";
+            pather.value="Show path";
+            pather.onclick=function() { onPath(tech) };
+            spanTag.appendChild(pather);
+
             return spanTag;
         }
+
+        function onPath(tech)
+        {
+            get_path_to(tech, onEachPath);
+        }
+
+        function onEachPath(path)
+        {
+            var toShow = "";
+            var sep = "";
+            for(var pathElem in path)
+            {
+                toShow = toShow + sep + path[pathElem].fn;
+                sep=", ";
+            }
+            alert("Path : " + toShow);
+        }
+
 
         function sorted_techlist(with_techtree)
         {
