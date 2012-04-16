@@ -80,6 +80,36 @@ function concat_arrays(obj1, obj2)
     return resultobj;
 }
 
+function pathing_helper(visiting_tech, callback)
+{
+    // call the pathing helper with a given node, and a callback.
+    // What it should do is call the callback, with a list of dependents, with itself at the end.
+    // So if a depends on b (a->b) ->c...
+    // calling this on a will result in f(a) calling f(b) resulting in f(c) which will call back with [c], which goes up to b
+    // which adds itself to the list and calls up with [c, b] which calls into a which will then call ITS callback with [c,b,a]
+
+    if( visiting_tech == null || visiting_tech.have )
+    {
+        callback([]);
+        return;
+    }
+    if(length(visiting_tech.prerequisites) == 0 )
+    {
+        // there are no prerequisites, so just callback with ourselves.
+        callback([visiting_tech];
+        return;
+    }
+    for(var prereq in visiting_tech.prerequisites)
+    {
+        pathing_helper(prereq, function(rcvd_list) {
+            rcvd_list.push(visiting_tech);
+            callback(rcvd_list);
+        }
+    }
+
+}
+
+
 function get_pathing_visitor( visiting_tech, state)
 {
     // this should return a list of prerequisites to visit.
